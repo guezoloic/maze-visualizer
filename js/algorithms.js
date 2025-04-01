@@ -22,6 +22,7 @@ class PathFindingAlgoState extends AlgoState {
     constructor(grid, start) {
         super()
         this.shortestPath = []
+        this.prev = {}
     }
 
     getShortestPath() {
@@ -38,17 +39,14 @@ class BfsState extends PathFindingAlgoState {
         this.queue = []
         this.queue.push(start)
         this.visited.add(start)
-        this.prev = {}
 
-        for(let i = 0 ; i < cols; i++) {
-            for(let j = 0; j < rows; j++) {
+        for(let i = 0 ; i < grid.cols; i++) {
+            for(let j = 0; j < grid.rows; j++) {
                 this.prev[this.pos_to_str(i, j)] = undefined
             }
         }
 
         this.end = end;
-
-        this.shortestPath = new Set()
 
     }
 
@@ -64,7 +62,7 @@ class BfsState extends PathFindingAlgoState {
 
         let j = curr[0]
         let i = curr[1]
-        this.grid[i][j] = 1
+        this.grid.set(i, j, 1)
 
         if(this.targetFound(curr)) {
             this.running = false
@@ -74,7 +72,7 @@ class BfsState extends PathFindingAlgoState {
         
         this.visited.add(this.pos_to_str(j, i))
 
-        for(let neighbor of get_neighbors(curr[0], curr[1])) {
+        for(let neighbor of this.grid.get_neighbors(curr[0], curr[1])) {
             let str_neighbor = this.pos_to_str(neighbor[0], neighbor[1])
             if(!this.visited.has(str_neighbor)) {
                 
@@ -106,8 +104,8 @@ class BfsState extends PathFindingAlgoState {
 
         let curr = this.end 
         while(curr !== undefined) {
-            this.grid[curr[1]][curr[0]] = 4
-            this.shortestPath.add(this.pos_to_str(curr[0], curr[1]))
+            this.grid.set(curr[1], curr[0], 4)
+            this.shortestPath.push<(this.pos_to_str(curr[0], curr[1]))
             curr = this.prev[this.pos_to_str(curr[0], curr[1])]
         }
 

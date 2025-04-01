@@ -2,14 +2,15 @@ let cellSize;
 let currentAlgorithm;
 let start = [5, 5];
 let end = [19, 12]
+let grid;
 
 function setup() {
     createCanvas(1000, 700);
-    cellSize = width/cols;
-    init_grid()
+    grid = new Grid(30, 16)
+    cellSize = width/grid.cols;
 
-    grid[start[1]][start[0]] = 2
-    grid[end[1]][end[0]] = 3
+    grid.set(start[1],start[0], 2)
+    grid.set(end[1], end[0] ,3)
 
     currentAlgorithm = new BfsState(grid,start, end)
 }
@@ -17,7 +18,7 @@ function setup() {
 function mousePressed() {
     let i = Math.floor(mouseX / cellSize)
     let j = Math.floor(mouseY / cellSize)
-    console.log(grid[j][i])
+    console.log(grid.get(j, i))
 }
 
 function update() {
@@ -34,8 +35,8 @@ function draw() {
 }
 
 function draw_grid() {
-    for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
+    for (let i = 0; i < grid.cols; i++) {
+        for (let j = 0; j < grid.rows; j++) {
 
         stroke(0);
         noFill();
@@ -48,19 +49,19 @@ function draw_grid() {
         }
 
         // visited
-        if(grid[j][i] == 1) {
+        if(grid.get(j, i) == 1) {
             fill(0, 0, 255, 100);
         }
         // start
-        if(grid[j][i] == 2) {
+        if(grid.get(j, i)  == 2) {
             fill(255, 0, 2, 255);
         }
         // end
-        if(grid[j][i] == 3) {
+        if(grid.get(j, i)  == 3) {
             fill(25, 25, 0, 255);
         }
         // path start->end
-        if(grid[j][i] == 4) {
+        if(grid.get(j, i)  == 4) {
             fill(25, 25, 66, 255);
         }
 
