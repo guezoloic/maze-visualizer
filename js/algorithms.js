@@ -27,12 +27,30 @@ class PathFindingAlgoState extends AlgoState {
         this.shortestPath = []
         /** A set of the cell preceding others */
         this.prev = {}
+
         this.start = start
         /** Target pos */
         this.end = end
+        
+        this.over = false
+        this.running = true
     }
 
     getShortestPath() {}
+    finish() {
+        this.over = true
+    }
+    
+    isRunning() {
+        return this.running
+    }
+
+    pause() {
+        this.running = false
+    }
+    resume() {
+        this.running = true
+    }
 }
 
 class BfsState extends PathFindingAlgoState {
@@ -61,10 +79,8 @@ class BfsState extends PathFindingAlgoState {
 
         let j = curr[0]
         let i = curr[1]
-        this.grid.set(i, j, 1)
 
         if(this.targetFound(curr)) {
-            this.running = false
             this.finish()
             return
         }
@@ -73,13 +89,17 @@ class BfsState extends PathFindingAlgoState {
 
         for(let neighbor of this.grid.get_neighbors(curr[0], curr[1])) {
             let str_neighbor = this.grid.pos_to_str(neighbor[0], neighbor[1])
-            if(!this.visited.has(str_neighbor)) {
+            if(!this.visited.has(str_neighbor) && this.grid.get(i, j) != CellState.WALL) {
                 
                 this.queue.push(neighbor)
                 this.visited.add(str_neighbor)
 
                 this.prev[str_neighbor] = curr
-            }
+            } 
+        }
+
+        if(this.grid.get(i,j) != CellState.WALL) {
+            this.grid.set(i, j, 1)
         }
     }
 
@@ -88,7 +108,7 @@ class BfsState extends PathFindingAlgoState {
     }
     
     isOver() {
-        return this.queue.length <= 0 || !this.running
+        return this.queue.length <= 0 || this.over
     }
 
     getShortestPath() {
@@ -96,8 +116,10 @@ class BfsState extends PathFindingAlgoState {
     }
 
     finish() {
+        super.finish()
         this.constructShortestPath()
     }
+    
 
     constructShortestPath() {
 

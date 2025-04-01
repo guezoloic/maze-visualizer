@@ -4,19 +4,22 @@ const CellState = Object.freeze({
     VISITED: 1,
     START: 2,
     END: 3,
-    PATH: 4
+    PATH: 4,
+    WALL:5
 });
 
 class Grid {
 
-    constructor(cols,rows) {
+    constructor(cols,rows, start, end) {
         this.cols = cols
         this.rows = rows
         this.data = []
-        this.init_grid()
+        this.start = start
+        this.end = end
+        this.generate(start, end)
     }
 
-    init_grid() {
+    generate(start, end) {
     
         for (let i = 0; i < this.rows; i++) {
             this.data[i] = [];
@@ -24,6 +27,8 @@ class Grid {
                 this.data[i][j] = 0;
             }
         }
+        this.data[start[1]][start[0]] = CellState.START
+        this.data[end[1]][end[0]] = CellState.END
     }
 
     pos_to_str(i, j) {
@@ -49,7 +54,15 @@ class Grid {
     }
 
     set(i, j, val) {
+        if(this.data[i][j] == CellState.START) {
+            this.start = undefined
+        }
+        if(this.data[i][j] == CellState.END) {
+            this.end = undefined
+        }
+
         this.data[i][j] = val
+
     }
 
     get(i, j) {

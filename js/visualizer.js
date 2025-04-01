@@ -1,32 +1,48 @@
 let cellSize;
 let currentAlgorithm;
-let start = [5, 5];
-let end = [19, 12]
 let grid;
+let posStart = [5, 5]
+let posEnd = [19, 12]
 
 function setup() {
     createCanvas(1000, 700);
-    grid = new Grid(30, 16)
-    cellSize = width/grid.cols;
-
-    grid.set(start[1],start[0], 2)
-    grid.set(end[1], end[0] ,3)
-
-    currentAlgorithm = new BfsState(grid,start, end)
+    grid = new Grid(30, 16, posStart, posEnd)
+    cellSize = width/grid.cols
+    currentAlgorithm = new BfsState(grid, posStart, posEnd)
 }
 
 function mousePressed() {
+    // TODO stop/reset if a simulation is running
     let i = Math.floor(mouseX / cellSize)
     let j = Math.floor(mouseY / cellSize)
     if(grid.cell_in_grid(i, j)) {
-        
-        console.log(grid.get(j, i))
+        if(mouseButton === LEFT) {
+            grid.set(j, i, CellState.WALL)
+        } 
+        if(mouseButton == RIGHT) {
+            grid.set(j, i, CellState.EMPTY)
+        }
     }
 
 }
 
+function keyPressed() {
+    // pause
+    if (key === 'p') {
+        if(currentAlgorithm.isRunning()) {
+            currentAlgorithm.pause()
+        } else {
+            currentAlgorithm.resume()
+        }
+    }
+    // reset
+    if (key === 'r') {
+        changeAlgorithm(new BfsState(grid, posStart, posEnd));
+    }
+}
+
 function update() {
-    if(!currentAlgorithm.isOver()) {
+    if(!currentAlgorithm.isOver() && currentAlgorithm.isRunning()) {
         currentAlgorithm.nextStep()
     } 
 }
@@ -67,6 +83,9 @@ function draw_grid() {
         // path start->end
         if(grid.get(j, i)  == CellState.PATH) {
             fill(25, 25, 66, 255);
+        }        
+        if(grid.get(j, i)  == CellState.WALL) {
+            fill(0, 0, 0, 255);
         }
 
         rect(i * cellSize , j * cellSize , cellSize ,cellSize );
@@ -75,4 +94,11 @@ function draw_grid() {
 
 function isMouseInCell(i, j) {
     return mouseX > i * cellSize  && mouseX < (i + 1) * cellSize  && mouseY > j *cellSize  && mouseY < (j + 1) *cellSize 
+}
+
+function changeAlgorithm(newAlgorithm) {
+    grid.generate(posStart, posEnd)
+    currentAlgorithm = newAlgorithm
+    // also pause the algorithm to let the user running it himself
+    currentAlgorithm.pause()
 }
