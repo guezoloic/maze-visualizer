@@ -1,4 +1,12 @@
 
+const CellState = Object.freeze({
+    EMPTY: 0,
+    VISITED: 1,
+    START: 2,
+    END: 3,
+    PATH: 4
+});
+
 class Grid {
 
     constructor(cols,rows) {
@@ -16,6 +24,10 @@ class Grid {
                 this.data[i][j] = 0;
             }
         }
+    }
+
+    pos_to_str(i, j) {
+        return `${i},${j}`
     }
 
     cell_in_grid(i, j) {

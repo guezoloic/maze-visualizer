@@ -18,7 +18,11 @@ function setup() {
 function mousePressed() {
     let i = Math.floor(mouseX / cellSize)
     let j = Math.floor(mouseY / cellSize)
-    console.log(grid.get(j, i))
+    if(grid.cell_in_grid(i, j)) {
+        
+        console.log(grid.get(j, i))
+    }
+
 }
 
 function update() {
@@ -42,26 +46,26 @@ function draw_grid() {
         noFill();
         rect(i * cellSize , j * cellSize ,cellSize ,cellSize );
             
-        if (isMousePosInCell(i, j)) {
+        if (isMouseInCell(i, j)) {
 
             fill(0, 255, 0, 100);
             rect(i * cellSize , j * cellSize , cellSize ,cellSize );
         }
 
         // visited
-        if(grid.get(j, i) == 1) {
+        if(grid.get(j, i) == CellState.VISITED) {
             fill(0, 0, 255, 100);
         }
         // start
-        if(grid.get(j, i)  == 2) {
+        if(grid.get(j, i)  == CellState.START) {
             fill(255, 0, 2, 255);
         }
         // end
-        if(grid.get(j, i)  == 3) {
+        if(grid.get(j, i)  == CellState.END) {
             fill(25, 25, 0, 255);
         }
         // path start->end
-        if(grid.get(j, i)  == 4) {
+        if(grid.get(j, i)  == CellState.PATH) {
             fill(25, 25, 66, 255);
         }
 
@@ -69,6 +73,6 @@ function draw_grid() {
     }
 }}
 
-function isMousePosInCell(i, j) {
+function isMouseInCell(i, j) {
     return mouseX > i * cellSize  && mouseX < (i + 1) * cellSize  && mouseY > j *cellSize  && mouseY < (j + 1) *cellSize 
 }
