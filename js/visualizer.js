@@ -12,18 +12,6 @@ function setup() {
 }
 
 function mousePressed() {
-    // TODO stop/reset if a simulation is running
-    let i = Math.floor(mouseX / cellSize)
-    let j = Math.floor(mouseY / cellSize)
-    if(grid.cell_in_grid(i, j)) {
-        if(mouseButton === LEFT) {
-            grid.set(j, i, CellState.WALL)
-        } 
-        if(mouseButton == RIGHT) {
-            grid.set(j, i, CellState.EMPTY)
-        }
-    }
-
 }
 
 function keyPressed() {
@@ -45,6 +33,21 @@ function update() {
     if(!currentAlgorithm.isOver() && currentAlgorithm.isRunning()) {
         currentAlgorithm.nextStep()
     } 
+
+    if(mouseIsPressed) {
+            
+        // TODO stop/reset if a simulation is running
+        let i = Math.floor(mouseX / cellSize)
+        let j = Math.floor(mouseY / cellSize)
+        if(grid.cell_in_grid(i, j)) {
+            if(mouseButton === LEFT) {
+                grid.set(j, i, CellState.WALL)
+            } 
+            if(mouseButton == RIGHT) {
+                grid.set(j, i, CellState.EMPTY)
+            }
+        }
+    }
 }
   
 function draw() {
