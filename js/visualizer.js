@@ -40,7 +40,7 @@ function update() {
         let i = Math.floor(mouseX / cellSize)
         let j = Math.floor(mouseY / cellSize)
         if(grid.cell_in_grid(i, j)) {
-            if(mouseButton === LEFT) {
+            if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
                 grid.set(j, i, CellState.WALL)
             } 
             if(mouseButton == RIGHT) {
