@@ -5,11 +5,16 @@ canvas {
 }
 
 #parent-div {
-    height: 100vh;
+    height: 100vh;  
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center; 
+    gap: 20px;
 }
 
 #params-div {
-    width: 400px;
+    width: 420px;
 }
 #params-div * {
     margin: 10px;
@@ -22,4 +27,26 @@ canvas {
     width: 70%;
     height: 100%;
     margin: 20px;
+}
+
+@media (max-width: 768px) {
+
+    #parent-div {
+        height: 200vh;
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        align-items: flex-start;
+    }
+
+    #params-div {
+        width: 100%;
+    }
+    
+    #canva-parent {
+        width: 95%;
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+    }
 }

@@ -2,7 +2,7 @@ let cellSize = 33;
 let currentAlgorithm;
 let grid;
 let posStart = [5, 5]
-let posEnd = [19, 12]
+let posEnd = [6, 15]
 
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
