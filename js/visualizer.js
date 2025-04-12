@@ -11,30 +11,15 @@ function setup() {
     grid = new Grid(30, 16, posStart, posEnd)
     cellSize = width/grid.cols
     currentAlgorithm = new BfsState(grid, posStart, posEnd)
+
+    currentAlgorithm.pause()
 }
-
-
-function pauseOrResume() {
-    if(currentAlgorithm.isRunning()) {
-        currentAlgorithm.pause()
-    } else {
-        currentAlgorithm.resume()
-    }
-}
-
-function resetGrid() {   
-    changeAlgorithm(new BfsState(grid, posStart, posEnd));
-}
-
-function keyPressed() {
-    // pause
-    if (key === 'p') {
-        pauseOrResume()
-    }
-    // reset
-    if (key === 'r') {
-        resetGrid()
-    }
+  
+function draw() {
+    update()
+    
+    background(255)
+    draw_grid()
 }
 
 function update() {
@@ -56,13 +41,6 @@ function update() {
             }
         }
     }
-}
-  
-function draw() {
-    update()
-    
-    background(255)
-    draw_grid()
 }
 
 function invertOpacity(opacity) {
@@ -119,6 +97,34 @@ function draw_grid() {
             cellOpacity = invertOpacity(cellOpacity);
         }
     }
+}
+
+/**  Inverts running state, if pause -> resume , if resume -> pause */
+function pauseOrResume() {
+    if(currentAlgorithm.isRunning()) {
+        currentAlgorithm.pause()
+    } else {
+        currentAlgorithm.resume()
+    }
+}
+
+function resetGrid() {   
+    changeAlgorithm(new BfsState(grid, posStart, posEnd));
+}
+
+function keyPressed() {
+    // pause
+    if (key === 'p') {
+        pauseOrResume()
+    }
+    // reset
+    if (key === 'r') {
+        resetGrid()
+    }
+}
+
+function resume() {
+    currentAlgorithm.resume()
 }
 
 function isMouseInCell(i, j) {
