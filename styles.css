@@ -1,0 +1,15 @@
+
+canvas {
+    box-shadow: 0px 10px 30px rgba(143, 143, 143, 0.3);
+    border-radius: 0px;
+}
+
+#params-div {
+    width: 320px;
+}
+#params-div * {
+    margin: 10px;
+}
+#params-div button {
+    width: 75%;
+}

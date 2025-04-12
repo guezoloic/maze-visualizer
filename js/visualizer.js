@@ -5,27 +5,35 @@ let posStart = [5, 5]
 let posEnd = [19, 12]
 
 function setup() {
-    createCanvas(1000, 533);
+    var canvas = createCanvas(1000, 533);
+    canvas.parent("parent-div");
+
     grid = new Grid(30, 16, posStart, posEnd)
     cellSize = width/grid.cols
     currentAlgorithm = new BfsState(grid, posStart, posEnd)
 }
 
-function mousePressed() {
+
+function pauseOrResume() {
+    if(currentAlgorithm.isRunning()) {
+        currentAlgorithm.pause()
+    } else {
+        currentAlgorithm.resume()
+    }
+}
+
+function resetGrid() {   
+    changeAlgorithm(new BfsState(grid, posStart, posEnd));
 }
 
 function keyPressed() {
     // pause
     if (key === 'p') {
-        if(currentAlgorithm.isRunning()) {
-            currentAlgorithm.pause()
-        } else {
-            currentAlgorithm.resume()
-        }
+        pauseOrResume()
     }
     // reset
     if (key === 'r') {
-        changeAlgorithm(new BfsState(grid, posStart, posEnd));
+        resetGrid()
     }
 }
 
