@@ -5,7 +5,7 @@ let posStart = [5, 5]
 let posEnd = [19, 12]
 
 function setup() {
-    createCanvas(1000, 700);
+    createCanvas(1000, 533);
     grid = new Grid(30, 16, posStart, posEnd)
     cellSize = width/grid.cols
     currentAlgorithm = new BfsState(grid, posStart, posEnd)
@@ -52,48 +52,66 @@ function update() {
   
 function draw() {
     update()
-
-    background(220); 
+    
+    background(255)
     draw_grid()
 }
 
-function draw_grid() {
-    for (let i = 0; i < grid.cols; i++) {
-        for (let j = 0; j < grid.rows; j++) {
-
-        stroke(0);
-        noFill();
-        rect(i * cellSize , j * cellSize ,cellSize ,cellSize );
-            
-        if (isMouseInCell(i, j)) {
-
-            fill(0, 255, 0, 100);
-            rect(i * cellSize , j * cellSize , cellSize ,cellSize );
-        }
-
-        // visited
-        if(grid.get(j, i) == CellState.VISITED) {
-            fill(0, 0, 255, 100);
-        }
-        // start
-        if(grid.get(j, i)  == CellState.START) {
-            fill(255, 0, 2, 255);
-        }
-        // end
-        if(grid.get(j, i)  == CellState.END) {
-            fill(25, 25, 0, 255);
-        }
-        // path start->end
-        if(grid.get(j, i)  == CellState.PATH) {
-            fill(25, 25, 66, 255);
-        }        
-        if(grid.get(j, i)  == CellState.WALL) {
-            fill(0, 0, 0, 255);
-        }
-
-        rect(i * cellSize , j * cellSize , cellSize ,cellSize );
+function invertOpacity(opacity) {
+    if(opacity == 250) {
+        return 230
+    } else {
+        return 250
     }
-}}
+}
+
+function draw_grid() {
+    let cellOpacity = 250
+    for (let i = 0; i < grid.cols; i++) {
+
+        if(grid.rows % 2 == 0) {
+            cellOpacity = invertOpacity(cellOpacity)
+        }
+
+        for (let j = 0; j < grid.rows; j++) {
+            
+            noStroke();
+            fill(cellOpacity);
+            rect(i * cellSize , j * cellSize ,cellSize ,cellSize );
+            
+                
+            if (isMouseInCell(i, j)) {
+
+                fill(0, 0, 0, 90);
+                rect(i * cellSize , j * cellSize , cellSize ,cellSize );
+            }
+
+            // visited
+            if(grid.get(j, i) == CellState.VISITED) {
+                fill(153, 153, 238, 255);
+            }
+            // start
+            if(grid.get(j, i)  == CellState.START) {
+                fill(59, 179, 65, 255);
+            }
+            // end
+            if(grid.get(j, i)  == CellState.END) {
+                fill(184, 62, 93, 255);
+            }
+            // path start->end
+            if(grid.get(j, i)  == CellState.PATH) {
+                fill(217, 255, 3, 255);
+            }        
+            if(grid.get(j, i)  == CellState.WALL) {
+                fill(0, 0, 0, 255);
+            }
+
+            rect(i * cellSize , j * cellSize , cellSize ,cellSize );
+
+            cellOpacity = invertOpacity(cellOpacity);
+        }
+    }
+}
 
 function isMouseInCell(i, j) {
     return mouseX > i * cellSize  && mouseX < (i + 1) * cellSize  && mouseY > j *cellSize  && mouseY < (j + 1) *cellSize 
@@ -102,6 +120,6 @@ function isMouseInCell(i, j) {
 function changeAlgorithm(newAlgorithm) {
     grid.generate(posStart, posEnd)
     currentAlgorithm = newAlgorithm
-    // also pause the algorithm to let the user running it himself
+    // also pause the algorithm to let the user running the simulation it himself
     currentAlgorithm.pause()
 }
