@@ -1,18 +1,31 @@
-let cellSize;
+let cellSize = 33;
 let currentAlgorithm;
 let grid;
 let posStart = [5, 5]
 let posEnd = [19, 12]
 
 function setup() {
-    var canvas = createCanvas(1000, 533);
-    canvas.parent("parent-div");
-
-    grid = new Grid(30, 16, posStart, posEnd)
-    cellSize = width/grid.cols
+    var canvas = createCanvas(1000, 533); // set default size before changing it
+    canvas.parent("canva-parent");
+    
+    adjustCanvasAndGrid()
+    
     currentAlgorithm = new BfsState(grid, posStart, posEnd)
-
     currentAlgorithm.pause()
+}
+
+function adjustCanvasAndGrid() {
+
+    let parentDiv = select("#canva-parent");  
+    let divWidth = parentDiv.elt.offsetWidth; 
+    let divHeight = parentDiv.elt.offsetHeight;
+    
+    let rows = Math.floor(divWidth / cellSize);
+    let cols = Math.floor(divHeight / cellSize);
+
+    resizeCanvas(rows * cellSize, cols * cellSize);
+
+    grid = new Grid(rows, cols, posStart, posEnd)
 }
   
 function draw() {
@@ -126,6 +139,12 @@ function keyPressed() {
 function resume() {
     currentAlgorithm.resume()
 }
+
+function windowResized() {
+    adjustCanvasAndGrid()
+    resetGrid()
+}
+
 
 function isMouseInCell(i, j) {
     return mouseX > i * cellSize  && mouseX < (i + 1) * cellSize  && mouseY > j *cellSize  && mouseY < (j + 1) *cellSize 

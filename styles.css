@@ -4,12 +4,22 @@ canvas {
     border-radius: 0px;
 }
 
+#parent-div {
+    height: 100vh;
+}
+
 #params-div {
-    width: 320px;
+    width: 400px;
 }
 #params-div * {
     margin: 10px;
 }
 #params-div button {
     width: 75%;
+}
+
+#canva-parent {
+    width: 70%;
+    height: 100%;
+    margin: 20px;
 }
