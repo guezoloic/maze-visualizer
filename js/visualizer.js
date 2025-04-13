@@ -169,7 +169,5 @@ function runMazeGeneration() {
 }
 function runPathFinding() {
     grid.remove_visited_cells()
-
-
     changeAlgorithm(new Bfs(grid, posStart, posEnd));
 }
