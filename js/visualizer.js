@@ -10,10 +10,9 @@ function setup() {
     
     adjustCanvasAndGrid()
     
-    currentAlgorithm = new RandomizedDfs(grid, posStart)
-    
-    //currentAlgorithm = new Bfs(grid, posStart, posEnd)
-    //currentAlgorithm.pause()
+    // set a default algorithm
+    currentAlgorithm = new Bfs(grid, posStart, posEnd)
+    currentAlgorithm.pause()
     
 }
 
@@ -125,7 +124,8 @@ function pauseOrResume() {
 }
 
 function resetGrid() {  
-    changeAlgorithm(new Bfs(grid, posStart, posEnd));
+    currentAlgorithm.finish()
+    grid.generate(posStart, posEnd)
 }
 
 function keyPressed() {
@@ -154,8 +154,19 @@ function isMouseInCell(i, j) {
 }
 
 function changeAlgorithm(newAlgorithm) {
-    grid.generate(posStart, posEnd)
     currentAlgorithm = newAlgorithm
-    // also pause the algorithm to let the user running the simulation it himself
-    currentAlgorithm.pause()
+}
+
+function runMazeGeneration() {
+    resetGrid()
+
+    //const select = document.getElementById("maze-gen-select"); TODO
+
+    changeAlgorithm(new RandomizedDfs(grid, posStart));
+}
+function runPathFinding() {
+    grid.remove_visited_cells()
+
+
+    changeAlgorithm(new Bfs(grid, posStart, posEnd));
 }

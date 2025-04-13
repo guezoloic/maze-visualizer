@@ -41,6 +41,17 @@ class Grid {
         }
     }
 
+    /** Replace all the cell with VISITED or PATH state by empty ones */
+    remove_visited_cells() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                if(this.data[i][j] == CellState.VISITED || this.data[i][j] == CellState.PATH) {
+                    this.data[i][j] = CellState.EMPTY;
+                }
+            }
+        }
+    }
+
     pos_to_str(i, j) {
         return `${i},${j}`
     }
