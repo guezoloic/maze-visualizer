@@ -12,7 +12,7 @@ function setup() {
     
     currentAlgorithm = new RandomizedDfs(grid, posStart)
     
-    currentAlgorithm = new BfsState(grid, posStart, posEnd)
+    currentAlgorithm = new Bfs(grid, posStart, posEnd)
     currentAlgorithm.pause()
     
 }
@@ -125,7 +125,7 @@ function pauseOrResume() {
 }
 
 function resetGrid() {   
-    changeAlgorithm(new BfsState(grid, posStart, posEnd));
+    changeAlgorithm(new Bfs(grid, posStart, posEnd));
 }
 
 function keyPressed() {
