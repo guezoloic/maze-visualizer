@@ -10,8 +10,11 @@ function setup() {
     
     adjustCanvasAndGrid()
     
+    currentAlgorithm = new RandomizedDfs(grid, posStart)
+    
     currentAlgorithm = new BfsState(grid, posStart, posEnd)
     currentAlgorithm.pause()
+    
 }
 
 function adjustCanvasAndGrid() {

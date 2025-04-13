@@ -31,6 +31,16 @@ class Grid {
         this.data[end[1]][end[0]] = CellState.END
     }
 
+    fill_empty_cells() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                if(this.data[i][j] == CellState.EMPTY) {
+                    this.data[i][j] = CellState.WALL;
+                }
+            }
+        }
+    }
+
     pos_to_str(i, j) {
         return `${i},${j}`
     }
@@ -39,9 +49,9 @@ class Grid {
         return i >= 0 && j >= 0 && i < this.cols && j < this.rows
     }
 
-    get_neighbors(i, j) {
+    get_neighbors(i, j, dist=1) {
         let neighbors = []
-        let directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+        let directions = [[-dist, 0], [dist, 0], [0, -dist], [0, dist]]
     
         for(let index in directions) {
             let direction = directions[index]
