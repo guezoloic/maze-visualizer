@@ -33,6 +33,9 @@ function adjustCanvasAndGrid() {
 function draw() {
     update()
     
+    // change mouse cursor appearance
+    cursor(CROSS);
+
     background(255)
     draw_grid()
 }
