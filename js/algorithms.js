@@ -4,7 +4,7 @@
  *  allowing to control its execution and providing the ability to 
  *  visualize each step (such as drawing a grid at each step).
  * 
- * This class can be extended to implement specific algorithms, such as pathfinding, sorting, etc.
+ *  This class can be extended to implement specific algorithms, such as pathfinding, sorting, etc.
  */
 class RealtimeAlgorithm {
 
@@ -14,14 +14,14 @@ class RealtimeAlgorithm {
     }
     /** Execute the code for a single step in a loop / recursion
      *  Acts like the body of a loop.
-     * Must be implemented by subclasses.
+     *  Must be implemented by subclasses.
     */
     nextStep() {
         throw new Error("Must implement method when inheriting");
     }
 
     /** Used in nextstep function, indicates if the algorithm should continue
-     *  It acts as the condition in while loop / base case for recursion.
+     *  It acts as the condition in while loop for recursion.
      *  Must be implemented by subclasses.
     */
     hasNextStep() {
@@ -89,7 +89,7 @@ class Bfs extends PathFindingAlgorithm {
 
 
     nextStep() {
-        if(!this.hasNextStep() || this.isOver()) return
+        if(!this.hasNextStep()) return
 
         let curr = this.queue.at(0)
         this.queue.shift()
@@ -120,7 +120,7 @@ class Bfs extends PathFindingAlgorithm {
         }
     }
     hasNextStep() {
-        return this.queue.length <= 0 || this.over
+        return this.queue.length > 0
     }
 
     targetFound(curr) {
@@ -167,10 +167,14 @@ class RandomizedDfs extends MazeGenAlgorithm {
         this.visited = new Set()
         this.visited.add(this.grid.pos_to_str(start[1], start[0]))
         
-        while(this.stack.length > 0) {
+    }
+
+    nextStep() {
+        if(this.hasNextStep()) {
             let curr = this.stack.pop()
 
             let neighbors = shuffleArray( this.grid.get_neighbors(curr[0], curr[1], 2))
+
             for(let neighbor of neighbors) {
                 
                 let str_neighbor = this.grid.pos_to_str(neighbor[0], neighbor[1])
@@ -195,9 +199,16 @@ class RandomizedDfs extends MazeGenAlgorithm {
                 this.grid.set(curr[1], curr[0], CellState.VISITED)
             }*/
         }
+        //If the algorithm hasn't been marked as over, this is the last step so we mark it as finished
+        else if(!this.isOver()) {
+            this.finish()
+        }
     }
 
-    nextStep() {
-
+    hasNextStep() {
+        return this.stack.length > 0
+    }
+    finish() {
+        super.finish()
     }
 }
