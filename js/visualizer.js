@@ -160,14 +160,31 @@ function changeAlgorithm(newAlgorithm) {
     currentAlgorithm = newAlgorithm
 }
 
+
 function runMazeGeneration() {
     resetGrid()
 
-    //const select = document.getElementById("maze-gen-select"); TODO
+    let selectElement = document.getElementById("maze-gen-select");
+    let selectedAlgorithm = selectElement.value;
 
-    changeAlgorithm(new RandomizedDfs(grid, posStart));
+    if(selectedAlgorithm == "randomized-dfs") {
+        changeAlgorithm(new RandomizedDfs(grid, posStart));
+    } else if(selectedAlgorithm == "recursive-division") {
+        changeAlgorithm(new RecursiveDivision(grid, posStart));
+    } else {
+        console.error("Selected algorithm doesn't exists")
+    }
+
 }
 function runPathFinding() {
     grid.remove_visited_cells()
-    changeAlgorithm(new Bfs(grid, posStart, posEnd));
+
+    let selectElement = document.getElementById("path-finding-select");
+    let selectedAlgorithm = selectElement.value;
+
+    if(selectedAlgorithm === "bfs") {
+        changeAlgorithm(new Bfs(grid, posStart, posEnd));
+    } else {
+        console.error("Selected algorithm doesn't exists")
+    }
 }
