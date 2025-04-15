@@ -11,8 +11,10 @@ function setup() {
     adjustCanvasAndGrid()
     
     // set a default algorithm
-    currentAlgorithm = new Bfs(grid, posStart, posEnd)
-    currentAlgorithm.pause()
+    //currentAlgorithm = new Bfs(grid, posStart, posEnd)
+    //currentAlgorithm.pause()
+
+    currentAlgorithm = new RecursiveDivision(grid, posStart)
     
 }
 

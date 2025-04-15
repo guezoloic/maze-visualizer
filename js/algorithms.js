@@ -212,3 +212,80 @@ class RandomizedDfs extends MazeGenAlgorithm {
         super.finish()
     }
 }
+
+class RecursiveDivision extends MazeGenAlgorithm {
+
+    constructor(grid, start) {
+        super(grid, start)
+
+    }
+
+    nextStep() {
+        if(!this.isOver()) {
+            this.processChamber(0, 0, this.grid.cols, this.grid.rows)
+            this.finish()
+        } 
+    }
+
+    processChamber(x_pos, y_pos, width, height) {
+
+
+        if(width <= 1 || height <= 1) {
+
+        } else {
+
+            let wall_vertical = Math.round(Math.random())  // 1 = vertical wall, 0 = horizontal
+
+            if(wall_vertical) {
+                let wall_x = randEven(x_pos, x_pos+width)
+    
+                this.create_vertical_wall(wall_x, y_pos, height)
+                    
+                let opening_pos_y = randEven(y_pos, y_pos+height)
+                this.grid.set(opening_pos_y, wall_x, CellState.EMPTY)
+    
+                this.processChamber(x_pos, y_pos, wall_x-x_pos, height)
+                this.processChamber(wall_x+1, y_pos, x_pos+width-(wall_x+1), height)
+            } else {
+                let wall_y = randOdd(y_pos, y_pos+height)
+
+                this.create_horizontal_wall(x_pos, wall_y, width)
+
+                let opening_pos_x = randOdd(x_pos, x_pos+width)
+                this.grid.set(wall_y, opening_pos_x, CellState.EMPTY)
+
+                this.processChamber(x_pos, y_pos, width, wall_y-y_pos)
+                this.processChamber(x_pos, wall_y+1, width, y_pos+height-(wall_y+1))
+            }
+        }
+    }
+
+    create_vertical_wall(x, y, length) {
+
+        for(let wall_y = y; wall_y < y+length ; wall_y++) {
+            let wall_pos = [x, wall_y]
+
+            if(this.grid.get(wall_pos[1], wall_pos[0]) === CellState.EMPTY) {
+                this.grid.set(wall_pos[1], wall_pos[0], CellState.WALL)
+            }
+        }
+    }
+
+    create_horizontal_wall(x, y, length) {
+        for(let wall_x = x; wall_x < x+length; wall_x++) {
+            let wall_pos = [wall_x, y]
+
+            if(this.grid.get(wall_pos[1], wall_pos[0]) === CellState.EMPTY) {
+                this.grid.set(wall_pos[1], wall_pos[0], CellState.WALL)
+            }
+        }
+    }
+
+    hasNextStep() {
+
+    }
+
+    finish() {
+        super.finish()
+    }
+}
