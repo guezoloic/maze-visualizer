@@ -4,6 +4,46 @@ let grid;
 let posStart = [5, 5]
 let posEnd = [6, 15]
 
+// true if dragging a cell false else
+let dragging_cell = false
+let dragged_cell_pos = undefined
+
+function cell_dragged(i, j) {
+    if(!dragging_cell) {
+        return false;
+    }
+    return j == dragged_cell_pos[0] && i == dragged_cell_pos[1]
+}
+
+function is_cell_draggable(i, j) {
+    let draggable_cell_states = [CellState.START, CellState.END]
+
+    for(let dragging_cell_state of draggable_cell_states) {
+
+        if(grid.get(j, i) == dragging_cell_state) {
+            return true
+        }
+    } 
+    return false
+}
+
+function can_move_dragged_to(i, j) {
+    return grid.cell_in_grid(i, j) && grid.get(j,i) === CellState.EMPTY
+}
+
+function move_dragged_to(i, j) {
+
+    let dragged_cell_state = grid.get(dragged_cell_pos[1], dragged_cell_pos[0])
+    grid.set(dragged_cell_pos[1], dragged_cell_pos[0], CellState.EMPTY)
+    grid.set(j, i, dragged_cell_state)
+}
+
+function undrag_cell() {
+
+    dragging_cell = false
+    dragged_cell_pos = undefined
+}
+
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
     canvas.parent("canva-parent");
@@ -46,18 +86,37 @@ function update() {
     } 
 
     if(mouseIsPressed) {
-            
-        // TODO stop/reset if a simulation is running
-        let i = Math.floor(mouseX / cellSize)
-        let j = Math.floor(mouseY / cellSize)
-        if(grid.cell_in_grid(i, j)) {
-            if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
-                grid.set(j, i, CellState.WALL)
-            } 
-            if(mouseButton == RIGHT) {
-                grid.set(j, i, CellState.EMPTY)
+        if(!dragging_cell) {
+            // TODO stop/reset if a simulation is running
+            let i = Math.floor(mouseX / cellSize)
+            let j = Math.floor(mouseY / cellSize)
+            if(grid.cell_in_grid(i, j)) {
+                if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
+                    grid.set(j, i, CellState.WALL)
+                } 
+                if(mouseButton == RIGHT) {
+                    grid.set(j, i, CellState.EMPTY)
+                }
             }
+            if(is_cell_draggable(i,j)) {
+                dragging_cell = true
+                dragged_cell_pos = [i,j]
+            }
+        }   
+    }
+}
+
+function mouseReleased() {
+    if(dragging_cell) {
+
+        let i = Math.floor(mouseY / cellSize)
+        let j = Math.floor(mouseX / cellSize)
+
+        if(can_move_dragged_to(j, i)) {
+            move_dragged_to(j, i)
         }
+        undrag_cell()
+
     }
 }
 
@@ -90,24 +149,26 @@ function draw_grid() {
                 rect(i * cellSize , j * cellSize , cellSize ,cellSize );
             }
 
-            // visited
-            if(grid.get(j, i) == CellState.VISITED) {
-                fill(153, 153, 238, 255);
-            }
-            // start
-            if(grid.get(j, i)  == CellState.START) {
-                fill(59, 179, 65, 255);
-            }
-            // end
-            if(grid.get(j, i)  == CellState.END) {
-                fill(184, 62, 93, 255);
-            }
-            // path start->end
-            if(grid.get(j, i)  == CellState.PATH) {
-                fill(217, 255, 3, 255);
-            }        
-            if(grid.get(j, i)  == CellState.WALL) {
-                fill(0, 0, 0, 255);
+            if(!cell_dragged(j, i)) {
+                // visited
+                if(grid.get(j, i) == CellState.VISITED) {
+                    fill(153, 153, 238, 255);
+                }
+                // start
+                if(grid.get(j, i)  == CellState.START) {
+                    fill(59, 179, 65, 255);
+                }
+                // end
+                if(grid.get(j, i)  == CellState.END) {
+                    fill(184, 62, 93, 255);
+                }
+                // path start->end
+                if(grid.get(j, i)  == CellState.PATH) {
+                    fill(217, 255, 3, 255);
+                }        
+                if(grid.get(j, i)  == CellState.WALL) {
+                    fill(0, 0, 0, 255);
+                }
             }
 
             rect(i * cellSize , j * cellSize , cellSize ,cellSize );
