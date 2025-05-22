@@ -14,8 +14,12 @@ class Grid {
         this.cols = cols
         this.rows = rows
         this.data = []
+
+        // Start and end positions for the pathfinding algorithm
+        // If multiple positions are placed, only the most recent one is stored
         this.start = start
         this.end = end
+
         this.generate(start, end)
     }
 
@@ -76,18 +80,41 @@ class Grid {
 
     set(i, j, val) {
         if(this.data[i][j] == CellState.START) {
+            if(val !== CellState.START) {
+                console.warn("replacing an existing CellState.START")
+            }
+
             this.start = undefined
         }
         if(this.data[i][j] == CellState.END) {
+            if(val !== CellState.END) {
+                console.warn("replaced an existing CellState.END")
+            }
+            
             this.end = undefined
         }
 
         this.data[i][j] = val
 
+        // Update start/end to point to the latest placed position
+        if(val == CellState.START) {
+            this.start = [j,i]
+        }
+        if(val == CellState.END) {
+            this.end = [j,i]
+        }
+
     }
 
     get(i, j) {
         return this.data[i][j]
+    }
+
+    get_start_pos() {
+        return this.start
+    }
+    get_end_pos() {
+        return this.end
     }
 }
 

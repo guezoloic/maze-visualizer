@@ -1,8 +1,6 @@
 let cellSize = 33;
 let currentAlgorithm;
 let grid;
-let posStart = [5, 5]
-let posEnd = [6, 15]
 
 // true if dragging a cell false else
 let dragging_cell = false
@@ -51,7 +49,7 @@ function setup() {
     adjustCanvasAndGrid()
     
     // set a default algorithm
-    currentAlgorithm = new Bfs(grid, posStart, posEnd)
+    currentAlgorithm = new Bfs(grid, [5, 5], [6, 15])
     currentAlgorithm.pause()
     
 }
@@ -67,7 +65,7 @@ function adjustCanvasAndGrid() {
 
     resizeCanvas(rows * cellSize, cols * cellSize);
 
-    grid = new Grid(rows, cols, posStart, posEnd)
+    grid = new Grid(rows, cols,  [5, 5], [6, 15])
 }
   
 function draw() {
@@ -98,6 +96,8 @@ function update() {
                     grid.set(j, i, CellState.EMPTY)
                 }
             }
+
+            //TODO reset current algorithm if cell dragged
             if(is_cell_draggable(i,j)) {
                 dragging_cell = true
                 dragged_cell_pos = [i,j]
@@ -189,6 +189,8 @@ function pauseOrResume() {
 
 function resetGrid() {  
     currentAlgorithm.finish()
+    let posStart = grid.get_start_pos()
+    let posEnd = grid.get_end_pos()
     grid.generate(posStart, posEnd)
 }
 
@@ -229,9 +231,9 @@ function runMazeGeneration() {
     let selectedAlgorithm = selectElement.value;
 
     if(selectedAlgorithm == "randomized-dfs") {
-        changeAlgorithm(new RandomizedDfs(grid, posStart));
+        changeAlgorithm(new RandomizedDfs(grid, grid.get_start_pos()));
     } else if(selectedAlgorithm == "recursive-division") {
-        changeAlgorithm(new RecursiveDivision(grid, posStart));
+        changeAlgorithm(new RecursiveDivision(grid, grid.get_start_pos()));
     } else {
         console.error("Selected algorithm doesn't exists")
     }
@@ -244,7 +246,7 @@ function runPathFinding() {
     let selectedAlgorithm = selectElement.value;
 
     if(selectedAlgorithm === "bfs") {
-        changeAlgorithm(new Bfs(grid, posStart, posEnd));
+        changeAlgorithm(new Bfs(grid, grid.get_start_pos(), grid.get_end_pos()));
     } else {
         console.error("Selected algorithm doesn't exists")
     }
