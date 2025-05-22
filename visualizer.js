@@ -2,45 +2,7 @@ let cellSize = 33;
 let currentAlgorithm;
 let grid;
 
-// true if dragging a cell false else
-let dragging_cell = false
-let dragged_cell_pos = undefined
-
-function cell_dragged(i, j) {
-    if(!dragging_cell) {
-        return false;
-    }
-    return j == dragged_cell_pos[0] && i == dragged_cell_pos[1]
-}
-
-function is_cell_draggable(i, j) {
-    let draggable_cell_states = [CellState.START, CellState.END]
-
-    for(let dragging_cell_state of draggable_cell_states) {
-
-        if(grid.get(j, i) == dragging_cell_state) {
-            return true
-        }
-    } 
-    return false
-}
-
-function can_move_dragged_to(i, j) {
-    return grid.cell_in_grid(i, j) && grid.get(j,i) === CellState.EMPTY
-}
-
-function move_dragged_to(i, j) {
-
-    let dragged_cell_state = grid.get(dragged_cell_pos[1], dragged_cell_pos[0])
-    grid.set(dragged_cell_pos[1], dragged_cell_pos[0], CellState.EMPTY)
-    grid.set(j, i, dragged_cell_state)
-}
-
-function undrag_cell() {
-
-    dragging_cell = false
-    dragged_cell_pos = undefined
-}
+let cellDragger ;
 
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
@@ -51,6 +13,8 @@ function setup() {
     // set a default algorithm
     currentAlgorithm = new Bfs(grid, [5, 5], [6, 15])
     currentAlgorithm.pause()
+
+    cellDragger = new CellDragger(grid)
     
 }
 
@@ -83,7 +47,7 @@ function update() {
         currentAlgorithm.nextStep()
     } 
 
-    if(mouseIsPressed && !dragging_cell) {
+    if(mouseIsPressed && !cellDragger.isDragging()) {
         // TODO stop/reset if a simulation is running
         let i = Math.floor(mouseX / cellSize)
         let j = Math.floor(mouseY / cellSize)
@@ -95,25 +59,23 @@ function update() {
                 grid.set(j, i, CellState.EMPTY)
             }
             //TODO reset current algorithm if cell dragged
-            if(is_cell_draggable(i,j)) {
-                dragging_cell = true
-                dragged_cell_pos = [i,j]
+            if(cellDragger.isCellDraggable(i,j)) {
+                cellDragger.dragCell(i, j)
             }
         }
     }
 }
 
 function mouseReleased() {
-    if(dragging_cell) {
+    if(cellDragger.isDragging()) {
 
         let i = Math.floor(mouseY / cellSize)
         let j = Math.floor(mouseX / cellSize)
 
-        if(can_move_dragged_to(j, i)) {
-            move_dragged_to(j, i)
+        if(cellDragger.canDragTo(j, i)) {
+            cellDragger.dragTo(j, i)
         }
-        undrag_cell()
-
+        cellDragger.releaseDragged()
     }
 }
 
@@ -146,7 +108,7 @@ function draw_grid() {
                 rect(i * cellSize , j * cellSize , cellSize ,cellSize );
             }
 
-            if(!cell_dragged(j, i)) {
+            if(!cellDragger.cellDragged(j, i)) {
                 // visited
                 if(grid.get(j, i) == CellState.VISITED) {
                     fill(153, 153, 238, 255);
