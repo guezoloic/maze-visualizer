@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import { grid } from "./visualizer";
+// import { grid } from "./visualizer.js";
 
-let width = 1000;
-let height = 533;
+const div = "canva-parent";
+const container = document.getElementById(div);
+
+let width = container.clientWidth;
+let height = container.clientHeight;
 
 /** scene: where all Object3d are placed */
 const scene = new THREE.Scene();
@@ -15,7 +18,6 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 scene.background = new THREE.Color(0x22223B);
 renderer.setSize(window.innerWidth, window.innerHeight);
-
 
 /** mouvement */
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -41,9 +43,6 @@ animate();
 
 
 // Activate/Deactive 3d canvas
-const div = "canva-parent";
-
-const container = document.getElementById(div);
 const button = document.getElementById("3dActivate");
 
 let isVisible  = false;
@@ -73,6 +72,8 @@ window.addEventListener('resize', () => {
     height = container.clientHeight;
 
     console.log(camera.aspect);
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
+
     renderer.setSize(width, height);
 });
