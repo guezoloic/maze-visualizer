@@ -83,26 +83,23 @@ function update() {
         currentAlgorithm.nextStep()
     } 
 
-    if(mouseIsPressed) {
-        if(!dragging_cell) {
-            // TODO stop/reset if a simulation is running
-            let i = Math.floor(mouseX / cellSize)
-            let j = Math.floor(mouseY / cellSize)
-            if(grid.cell_in_grid(i, j)) {
-                if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
-                    grid.set(j, i, CellState.WALL)
-                } 
-                if(mouseButton == RIGHT) {
-                    grid.set(j, i, CellState.EMPTY)
-                }
+    if(mouseIsPressed && !dragging_cell) {
+        // TODO stop/reset if a simulation is running
+        let i = Math.floor(mouseX / cellSize)
+        let j = Math.floor(mouseY / cellSize)
+        if(grid.cell_in_grid(i, j)) {
+            if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
+                grid.set(j, i, CellState.WALL)
+            } 
+            if(mouseButton == RIGHT) {
+                grid.set(j, i, CellState.EMPTY)
             }
-
             //TODO reset current algorithm if cell dragged
             if(is_cell_draggable(i,j)) {
                 dragging_cell = true
                 dragged_cell_pos = [i,j]
             }
-        }   
+        }
     }
 }
 
