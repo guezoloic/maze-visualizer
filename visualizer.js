@@ -79,6 +79,15 @@ function update() {
             }
         }
     }
+    
+    if(keyIsPressed) {
+        if (keyIsDown(CONTROL) && keyIsDown(90) && keyIsDown(SHIFT) ) {
+            cellUndoRedoManager.redo();
+        }
+        else if(keyIsDown(CONTROL) && keyIsDown(90)) {
+            cellUndoRedoManager.undo();
+        }
+    }
 }
 
 function mouseReleased() {
@@ -183,13 +192,6 @@ function keyPressed() {
     // reset
     if (key === 'r') {
         resetGrid()
-    }
-
-    if (keyIsDown(CONTROL) && keyIsDown(90) && keyIsDown(SHIFT) ) {
-        cellUndoRedoManager.redo();
-    }
-    else if(keyIsDown(CONTROL) && keyIsDown(90)) {
-        cellUndoRedoManager.undo();
     }
 }
 
