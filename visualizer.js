@@ -4,6 +4,8 @@ let grid;
 
 let cellDragger ;
 
+let placingWalls = false;
+
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
     canvas.parent("canva-parent");
@@ -45,7 +47,7 @@ function draw() {
 function update() {
     if(!currentAlgorithm.isOver() && currentAlgorithm.isRunning()) {
         currentAlgorithm.nextStep()
-    } 
+    }
 
     if(mouseIsPressed && !cellDragger.isDragging()) {
         // TODO stop/reset if a simulation is running
@@ -54,12 +56,13 @@ function update() {
         if(grid.cell_in_grid(i, j)) {
             if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
                 grid.set(j, i, CellState.WALL)
+                placingWalls = true;
             } 
             if(mouseButton == RIGHT) {
                 grid.set(j, i, CellState.EMPTY)
             }
             //TODO reset current algorithm if cell dragged
-            if(cellDragger.isCellDraggable(i,j)) {
+            if(cellDragger.isCellDraggable(i,j) && !placingWalls) {
                 cellDragger.dragCell(i, j)
             }
         }
@@ -76,6 +79,11 @@ function mouseReleased() {
             cellDragger.dragTo(j, i)
         }
         cellDragger.releaseDragged()
+    }
+    
+    if(placingWalls) {
+        placingWalls = false
+        // TODO add placed walls to history
     }
 }
 
