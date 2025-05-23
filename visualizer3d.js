@@ -19,16 +19,17 @@ renderer.setSize(width, height);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+// function that find correct geometry / material by its grid number
 function finder(x) {
     switch (x) {
         // visited
         case 1: return {
-            geometry: new THREE.SphereGeometry(0.5, 32, 32), 
+            geometry: new THREE.SphereGeometry(0.7, 32, 32), 
             material: new THREE.MeshStandardMaterial({color: 0xff0000})
         };
         // start
         case 2: return {
-            geometry: new THREE.SphereGeometry(0.5, 32, 32), 
+            geometry: new THREE.SphereGeometry(0.6, 32, 32), 
             material: new THREE.MeshStandardMaterial({color: 0xff0000})
         };
         // end
@@ -153,7 +154,7 @@ function find_grid() {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    end.rotation.y += 0.05;
+    if(end) end.rotation.y += 0.05;
     renderer.render(scene, camera);
 };
 
