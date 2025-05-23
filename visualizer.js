@@ -3,6 +3,7 @@ let currentAlgorithm;
 let grid;
 
 let cellDragger ;
+let cellUndoRedoManager;
 
 let placingWalls = false;
 
@@ -16,7 +17,8 @@ function setup() {
     currentAlgorithm = new Bfs(grid, [5, 5], [6, 15])
     currentAlgorithm.pause()
 
-    cellDragger = new CellDragger(grid)
+    cellDragger = new CellDragger(grid);
+    cellUndoRedoManager = new CellUndoRedoManager(grid);
     
 }
 
@@ -45,6 +47,7 @@ function draw() {
 }
 
 function update() {
+
     if(!currentAlgorithm.isOver() && currentAlgorithm.isRunning()) {
         currentAlgorithm.nextStep()
     }
@@ -53,14 +56,23 @@ function update() {
         // TODO stop/reset if a simulation is running
         let i = Math.floor(mouseX / cellSize)
         let j = Math.floor(mouseY / cellSize)
+
         if(grid.cell_in_grid(i, j)) {
+
             if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
+
                 grid.set(j, i, CellState.WALL)
                 placingWalls = true;
+                cellUndoRedoManager.recordCellPlacement([j, i])
+
             } 
-            if(mouseButton == RIGHT) {
+
+            if(mouseButton == RIGHT && grid.get(j, i) !== CellState.EMPTY) {
+                
                 grid.set(j, i, CellState.EMPTY)
+                cellUndoRedoManager.recordCellRemoval([j, i])
             }
+
             //TODO reset current algorithm if cell dragged
             if(cellDragger.isCellDraggable(i,j) && !placingWalls) {
                 cellDragger.dragCell(i, j)
@@ -159,6 +171,8 @@ function resetGrid() {
     let posStart = grid.get_start_pos()
     let posEnd = grid.get_end_pos()
     grid.generate(posStart, posEnd)
+    
+    cellUndoRedoManager.resetHistory()
 }
 
 function keyPressed() {
@@ -169,6 +183,13 @@ function keyPressed() {
     // reset
     if (key === 'r') {
         resetGrid()
+    }
+
+    if (keyIsDown(CONTROL) && keyIsDown(90) && keyIsDown(SHIFT) ) {
+        cellUndoRedoManager.redo();
+    }
+    else if(keyIsDown(CONTROL) && keyIsDown(90)) {
+        cellUndoRedoManager.undo();
     }
 }
 
