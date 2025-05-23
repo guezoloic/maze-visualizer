@@ -3,6 +3,9 @@ let currentAlgorithm;
 let grid;
 
 let cellDragger ;
+let cellUndoRedoManager;
+
+let placingWalls = false;
 
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
@@ -14,7 +17,8 @@ function setup() {
     currentAlgorithm = new Bfs(grid, [5, 5], [6, 15])
     currentAlgorithm.pause()
 
-    cellDragger = new CellDragger(grid)
+    cellDragger = new CellDragger(grid);
+    cellUndoRedoManager = new CellUndoRedoManager(grid);
     
 }
 
@@ -43,25 +47,45 @@ function draw() {
 }
 
 function update() {
+
     if(!currentAlgorithm.isOver() && currentAlgorithm.isRunning()) {
         currentAlgorithm.nextStep()
-    } 
+    }
 
     if(mouseIsPressed && !cellDragger.isDragging()) {
         // TODO stop/reset if a simulation is running
         let i = Math.floor(mouseX / cellSize)
         let j = Math.floor(mouseY / cellSize)
+
         if(grid.cell_in_grid(i, j)) {
+
             if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
+
                 grid.set(j, i, CellState.WALL)
+                placingWalls = true;
+                cellUndoRedoManager.recordCellPlacement([j, i])
+
             } 
-            if(mouseButton == RIGHT) {
+
+            if(mouseButton == RIGHT && grid.get(j, i) !== CellState.EMPTY) {
+                
                 grid.set(j, i, CellState.EMPTY)
+                cellUndoRedoManager.recordCellRemoval([j, i])
             }
+
             //TODO reset current algorithm if cell dragged
-            if(cellDragger.isCellDraggable(i,j)) {
+            if(cellDragger.isCellDraggable(i,j) && !placingWalls) {
                 cellDragger.dragCell(i, j)
             }
+        }
+    }
+    
+    if(keyIsPressed) {
+        if (keyIsDown(CONTROL) && keyIsDown(90) && keyIsDown(SHIFT) ) {
+            cellUndoRedoManager.redo();
+        }
+        else if(keyIsDown(CONTROL) && keyIsDown(90)) {
+            cellUndoRedoManager.undo();
         }
     }
 }
@@ -76,6 +100,11 @@ function mouseReleased() {
             cellDragger.dragTo(j, i)
         }
         cellDragger.releaseDragged()
+    }
+    
+    if(placingWalls) {
+        placingWalls = false
+        // TODO add placed walls to history
     }
 }
 
@@ -151,6 +180,8 @@ function resetGrid() {
     let posStart = grid.get_start_pos()
     let posEnd = grid.get_end_pos()
     grid.generate(posStart, posEnd)
+    
+    cellUndoRedoManager.resetHistory()
 }
 
 function keyPressed() {
