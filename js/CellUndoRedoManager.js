@@ -11,16 +11,26 @@ class CellUndoRedoManager {
          */
         this.undo_stack = []
         this.redo_stack = []
+
+        /** The number of maximum recorded actions in the undo stack */
+        this.stack_limit = 200
     }
 
-    /** Push to the undo stack a cell position
-     */
+    /** Push to the undo stack a cell placement action*/
     recordCellPlacement(pos) {
-        this.undo_stack.push({"action": "add", "position": pos}) 
-        // TODO remove if too many elements in undostack
+        this._recordCell("add", pos)
     }
+
     recordCellRemoval(pos) {
-        this.undo_stack.push({"action": "remove", "position": pos}) 
+        this._recordCell("remove", pos)
+    }
+
+    _recordCell(action, pos) {
+        this.undo_stack.push({"action": action, "position": pos}) 
+
+        if (this.undo_stack.length > this.stack_limit) {
+            this.undo_stack.shift(); 
+        }
     }
 
     undo() {
