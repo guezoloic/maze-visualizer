@@ -45,7 +45,7 @@ class Bfs extends PathFindingAlgorithm {
             } 
         }
 
-        if(this.grid.get(i,j) != CellState.WALL) {
+        if(this.grid.get(i,j) === CellState.EMPTY) {
             this.grid.set(i, j, 1)
         }
     }
@@ -66,7 +66,9 @@ class Bfs extends PathFindingAlgorithm {
 
         let curr = this.end 
         while(curr !== undefined) {
-            this.grid.set(curr[1], curr[0], 4)
+            if(this.grid.get(curr[1],curr[0]) === CellState.VISITED) {
+                this.grid.set(curr[1], curr[0], 4)
+            }
             this.shortestPath.push(this.grid.pos_to_str(curr[0], curr[1]))
             curr = this.prev[this.grid.pos_to_str(curr[0], curr[1])]
         }

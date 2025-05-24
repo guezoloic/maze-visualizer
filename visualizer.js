@@ -1,8 +1,14 @@
-let cellSize = 33;
+
 let currentAlgorithm;
 let grid;
-let posStart = [5, 5]
-let posEnd = [6, 15]
+
+let cellDragger ;
+let cellUndoRedoManager;
+
+let placingWalls = false;
+
+// Grid params
+let cellSize = 33;
 
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
@@ -11,8 +17,11 @@ function setup() {
     adjustCanvasAndGrid()
     
     // set a default algorithm
-    currentAlgorithm = new Bfs(grid, posStart, posEnd)
+    currentAlgorithm = new Bfs(grid, grid.get_start_pos(), grid.get_end_pos())
     currentAlgorithm.pause()
+
+    cellDragger = new CellDragger(grid);
+    cellUndoRedoManager = new CellUndoRedoManager(grid);
     
 }
 
@@ -22,12 +31,12 @@ function adjustCanvasAndGrid() {
     let divWidth = parentDiv.elt.offsetWidth; 
     let divHeight = parentDiv.elt.offsetHeight;
     
-    let rows = Math.floor(divWidth / cellSize);
-    let cols = Math.floor(divHeight / cellSize);
+    let cols = Math.floor(divWidth / cellSize);
+    let rows = Math.floor(divHeight / cellSize);
 
-    resizeCanvas(rows * cellSize, cols * cellSize);
+    resizeCanvas(cols * cellSize, rows * cellSize);
 
-    grid = new Grid(rows, cols, posStart, posEnd)
+    grid = new Grid(cols, rows, [3, 5], [cols-3, Math.min(16, rows-1)])
 }
   
 function draw() {
@@ -41,23 +50,78 @@ function draw() {
 }
 
 function update() {
+
     if(!currentAlgorithm.isOver() && currentAlgorithm.isRunning()) {
         currentAlgorithm.nextStep()
-    } 
+    }
 
-    if(mouseIsPressed) {
-            
-        // TODO stop/reset if a simulation is running
+    if(mouseIsPressed && !cellDragger.isDragging()) {
         let i = Math.floor(mouseX / cellSize)
         let j = Math.floor(mouseY / cellSize)
+
         if(grid.cell_in_grid(i, j)) {
+
+
             if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
+
                 grid.set(j, i, CellState.WALL)
+                placingWalls = true;
+                cellUndoRedoManager.recordCellPlacement([j, i])
+
             } 
-            if(mouseButton == RIGHT) {
+
+            if(mouseButton === RIGHT && currentAlgorithm.isRunning()) {
+                stopAlgorithm()
+            }
+
+            if(mouseButton == RIGHT && grid.get(j, i) === CellState.WALL) {
+                
                 grid.set(j, i, CellState.EMPTY)
+                cellUndoRedoManager.recordCellRemoval([j, i])
+            }
+
+            if(cellDragger.isCellDraggable(i,j) && !placingWalls) {
+                cellDragger.dragCell(i, j)
+
+                if(currentAlgorithm.isRunning()) {
+                    stopAlgorithm()
+                }
+
             }
         }
+    }
+    
+    if(keyIsPressed) {
+        if (keyIsDown(CONTROL) && keyIsDown(90) && keyIsDown(SHIFT) ) {
+            cellUndoRedoManager.redo();
+        }
+        else if(keyIsDown(CONTROL) && keyIsDown(90)) {
+            cellUndoRedoManager.undo();
+        }
+        if (key === 'p') {
+            pauseOrResume()
+        }
+        if (key === 'r') {
+            resetGrid()
+        }
+    }
+}
+
+function mouseReleased() {
+    if(cellDragger.isDragging()) {
+
+        let i = Math.floor(mouseY / cellSize)
+        let j = Math.floor(mouseX / cellSize)
+
+        if(cellDragger.canDropTo(j, i)) {
+            cellDragger.dropTo(j, i)
+        }
+        cellDragger.releaseDragged()
+    }
+    
+    if(placingWalls) {
+        placingWalls = false
+        // TODO add placed walls to history
     }
 }
 
@@ -90,24 +154,26 @@ function draw_grid() {
                 rect(i * cellSize , j * cellSize , cellSize ,cellSize );
             }
 
-            // visited
-            if(grid.get(j, i) == CellState.VISITED) {
-                fill(153, 153, 238, 255);
-            }
-            // start
-            if(grid.get(j, i)  == CellState.START) {
-                fill(59, 179, 65, 255);
-            }
-            // end
-            if(grid.get(j, i)  == CellState.END) {
-                fill(184, 62, 93, 255);
-            }
-            // path start->end
-            if(grid.get(j, i)  == CellState.PATH) {
-                fill(217, 255, 3, 255);
-            }        
-            if(grid.get(j, i)  == CellState.WALL) {
-                fill(0, 0, 0, 255);
+            if(!cellDragger.cellDragged(j, i)) {
+                // visited
+                if(grid.get(j, i) == CellState.VISITED) {
+                    fill(153, 153, 238, 255);
+                }
+                // start
+                if(grid.get(j, i)  == CellState.START) {
+                    fill(59, 179, 65, 255);
+                }
+                // end
+                if(grid.get(j, i)  == CellState.END) {
+                    fill(184, 62, 93, 255);
+                }
+                // path start->end
+                if(grid.get(j, i)  == CellState.PATH) {
+                    fill(217, 255, 3, 255);
+                }        
+                if(grid.get(j, i)  == CellState.WALL) {
+                    fill(0, 0, 0, 255);
+                }
             }
 
             rect(i * cellSize , j * cellSize , cellSize ,cellSize );
@@ -128,18 +194,18 @@ function pauseOrResume() {
 
 function resetGrid() {  
     currentAlgorithm.finish()
-    grid.generate(posStart, posEnd)
+
+    let posStart = grid.get_start_pos()
+    let posEnd = grid.get_end_pos()
+    grid.initialize(posStart, posEnd)
+    
+    cellUndoRedoManager.resetHistory()
 }
 
-function keyPressed() {
-    // pause
-    if (key === 'p') {
-        pauseOrResume()
-    }
-    // reset
-    if (key === 'r') {
-        resetGrid()
-    }
+function stopAlgorithm() {
+    
+    currentAlgorithm.finish()
+    grid.remove_visited_cells()
 }
 
 function resume() {
@@ -161,30 +227,42 @@ function changeAlgorithm(newAlgorithm) {
 }
 
 
-function runMazeGeneration() {
+
+document.getElementById("run-maze-gen-btn").addEventListener("click", event => {
+
     resetGrid()
 
     let selectElement = document.getElementById("maze-gen-select");
     let selectedAlgorithm = selectElement.value;
 
     if(selectedAlgorithm == "randomized-dfs") {
-        changeAlgorithm(new RandomizedDfs(grid, posStart));
+        changeAlgorithm(new RandomizedDfs(grid, grid.get_start_pos()));
     } else if(selectedAlgorithm == "recursive-division") {
-        changeAlgorithm(new RecursiveDivision(grid, posStart));
+        changeAlgorithm(new RecursiveDivision(grid, grid.get_start_pos()));
     } else {
         console.error("Selected algorithm doesn't exists")
     }
 
-}
-function runPathFinding() {
+})
+
+document.getElementById("run-path-finding-btn").addEventListener("click", event => {
+
     grid.remove_visited_cells()
 
     let selectElement = document.getElementById("path-finding-select");
     let selectedAlgorithm = selectElement.value;
 
     if(selectedAlgorithm === "bfs") {
-        changeAlgorithm(new Bfs(grid, posStart, posEnd));
+        changeAlgorithm(new Bfs(grid, grid.get_start_pos(), grid.get_end_pos()));
     } else {
         console.error("Selected algorithm doesn't exists")
     }
-}
+})
+
+document.getElementById("grid-clear-btn").addEventListener("click", event => {
+    resetGrid()
+})
+    
+document.getElementById("pause-btn").addEventListener("click", event => {
+    pauseOrResume()
+})
