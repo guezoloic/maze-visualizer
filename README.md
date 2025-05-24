@@ -9,6 +9,9 @@ This app showcases a practical use of graph theory algorithms such as **BFS**, *
 
 🧪 Try it out here : **https://spaghetoz.github.io/maze-visualizer/**
 
+<br>
+
+![maze-visualizer-preview](https://github.com/user-attachments/assets/532b7f7e-9083-4cc5-924d-7ac3d8f2e68b)
 
 <br>
 
@@ -17,11 +20,12 @@ This app showcases a practical use of graph theory algorithms such as **BFS**, *
 - 🔎 Visualization step-by-step
 
 ## 🕹 How to use it
-- Left click on grid to place the walls (obstacles)
-- Right click to delete them
-- R key to reset the grid
-- P key to pause/resume the solver
-
+- `Left click` on grid to place the walls (obstacles)
+- `Right click` to delete them
+- `R key` to reset the grid
+- `P key` to pause/resume the solver
+- `Ctrl-z` to undo wall placement/removal
+- `Ctrl-shift-z` to redo wall placement/removal
 
 ## 📦 Libraries
 - P5JS
