@@ -214,7 +214,9 @@ function changeAlgorithm(newAlgorithm) {
 }
 
 
-function runMazeGeneration() {
+
+document.getElementById("run-maze-gen-btn").addEventListener("click", event => {
+
     resetGrid()
 
     let selectElement = document.getElementById("maze-gen-select");
@@ -228,8 +230,10 @@ function runMazeGeneration() {
         console.error("Selected algorithm doesn't exists")
     }
 
-}
-function runPathFinding() {
+})
+
+document.getElementById("run-path-finding-btn").addEventListener("click", event => {
+
     grid.remove_visited_cells()
 
     let selectElement = document.getElementById("path-finding-select");
@@ -240,4 +244,12 @@ function runPathFinding() {
     } else {
         console.error("Selected algorithm doesn't exists")
     }
-}
+})
+
+document.getElementById("grid-clear-btn").addEventListener("click", event => {
+    resetGrid()
+})
+    
+document.getElementById("pause-btn").addEventListener("click", event => {
+    pauseOrResume()
+})
