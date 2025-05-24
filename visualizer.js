@@ -59,6 +59,7 @@ function update() {
 
         if(grid.cell_in_grid(i, j)) {
 
+
             if(mouseButton === LEFT && grid.get(j, i) == CellState.EMPTY) {
 
                 grid.set(j, i, CellState.WALL)
@@ -67,7 +68,11 @@ function update() {
 
             } 
 
-            if(mouseButton == RIGHT && grid.get(j, i) !== CellState.EMPTY) {
+            if(mouseButton === RIGHT && currentAlgorithm.isRunning()) {
+                stopAlgorithm()
+            }
+
+            if(mouseButton == RIGHT && grid.get(j, i) === CellState.WALL) {
                 
                 grid.set(j, i, CellState.EMPTY)
                 cellUndoRedoManager.recordCellRemoval([j, i])
@@ -76,6 +81,11 @@ function update() {
             //TODO reset current algorithm if cell dragged
             if(cellDragger.isCellDraggable(i,j) && !placingWalls) {
                 cellDragger.dragCell(i, j)
+
+                if(currentAlgorithm.isRunning()) {
+                    stopAlgorithm()
+                }
+
             }
         }
     }
@@ -182,6 +192,12 @@ function resetGrid() {
     grid.generate(posStart, posEnd)
     
     cellUndoRedoManager.resetHistory()
+}
+
+function stopAlgorithm() {
+    
+    currentAlgorithm.finish()
+    grid.remove_visited_cells()
 }
 
 function keyPressed() {
