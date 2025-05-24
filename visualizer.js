@@ -1,4 +1,4 @@
-let cellSize = 33;
+
 let currentAlgorithm;
 let grid;
 
@@ -7,6 +7,9 @@ let cellUndoRedoManager;
 
 let placingWalls = false;
 
+// Grid params
+let cellSize = 33;
+
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
     canvas.parent("canva-parent");
@@ -14,7 +17,7 @@ function setup() {
     adjustCanvasAndGrid()
     
     // set a default algorithm
-    currentAlgorithm = new Bfs(grid, [5, 5], [6, 15])
+    currentAlgorithm = new Bfs(grid, grid.get_start_pos(), grid.get_end_pos())
     currentAlgorithm.pause()
 
     cellDragger = new CellDragger(grid);
@@ -28,12 +31,12 @@ function adjustCanvasAndGrid() {
     let divWidth = parentDiv.elt.offsetWidth; 
     let divHeight = parentDiv.elt.offsetHeight;
     
-    let rows = Math.floor(divWidth / cellSize);
-    let cols = Math.floor(divHeight / cellSize);
+    let cols = Math.floor(divWidth / cellSize);
+    let rows = Math.floor(divHeight / cellSize);
 
-    resizeCanvas(rows * cellSize, cols * cellSize);
+    resizeCanvas(cols * cellSize, rows * cellSize);
 
-    grid = new Grid(rows, cols,  [5, 5], [6, 15])
+    grid = new Grid(cols, rows, [3, 5], [cols-3, Math.min(16, rows-1)])
 }
   
 function draw() {

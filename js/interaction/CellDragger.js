@@ -34,7 +34,7 @@ class CellDragger {
 
         for(let dragging_cell_state of draggable_cell_states) {
 
-            if(this.grid.get(j, i) == dragging_cell_state) {
+            if(this.grid.cell_in_grid(i, j) && this.grid.get(j, i) == dragging_cell_state) {
                 return true
             }
         } 
