@@ -41,11 +41,11 @@ class CellDragger {
         return false
     }
 
-    canDragTo(i, j) {
+    canDropTo(i, j) {
         return this.grid.cell_in_grid(i, j) && this.grid.get(j,i) === CellState.EMPTY
     }
 
-    dragTo(i, j) {
+    dropTo(i, j) {
 
         let dragged_cell_state = this.grid.get(this.dragged_cell_pos[1], this.dragged_cell_pos[0])
         this.grid.set(this.dragged_cell_pos[1], this.dragged_cell_pos[0], CellState.EMPTY)

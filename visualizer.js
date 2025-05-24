@@ -53,7 +53,6 @@ function update() {
     }
 
     if(mouseIsPressed && !cellDragger.isDragging()) {
-        // TODO stop/reset if a simulation is running
         let i = Math.floor(mouseX / cellSize)
         let j = Math.floor(mouseY / cellSize)
 
@@ -78,7 +77,6 @@ function update() {
                 cellUndoRedoManager.recordCellRemoval([j, i])
             }
 
-            //TODO reset current algorithm if cell dragged
             if(cellDragger.isCellDraggable(i,j) && !placingWalls) {
                 cellDragger.dragCell(i, j)
 
@@ -97,6 +95,12 @@ function update() {
         else if(keyIsDown(CONTROL) && keyIsDown(90)) {
             cellUndoRedoManager.undo();
         }
+        if (key === 'p') {
+            pauseOrResume()
+        }
+        if (key === 'r') {
+            resetGrid()
+        }
     }
 }
 
@@ -106,8 +110,8 @@ function mouseReleased() {
         let i = Math.floor(mouseY / cellSize)
         let j = Math.floor(mouseX / cellSize)
 
-        if(cellDragger.canDragTo(j, i)) {
-            cellDragger.dragTo(j, i)
+        if(cellDragger.canDropTo(j, i)) {
+            cellDragger.dropTo(j, i)
         }
         cellDragger.releaseDragged()
     }
@@ -187,9 +191,10 @@ function pauseOrResume() {
 
 function resetGrid() {  
     currentAlgorithm.finish()
+
     let posStart = grid.get_start_pos()
     let posEnd = grid.get_end_pos()
-    grid.generate(posStart, posEnd)
+    grid.initialize(posStart, posEnd)
     
     cellUndoRedoManager.resetHistory()
 }
@@ -198,17 +203,6 @@ function stopAlgorithm() {
     
     currentAlgorithm.finish()
     grid.remove_visited_cells()
-}
-
-function keyPressed() {
-    // pause
-    if (key === 'p') {
-        pauseOrResume()
-    }
-    // reset
-    if (key === 'r') {
-        resetGrid()
-    }
 }
 
 function resume() {

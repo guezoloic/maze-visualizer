@@ -20,10 +20,10 @@ class Grid {
         this.start = start
         this.end = end
 
-        this.generate(start, end)
+        this.initialize(start, end)
     }
 
-    generate(start, end) {
+    initialize(start, end) {
     
         for (let i = 0; i < this.rows; i++) {
             this.data[i] = [];
