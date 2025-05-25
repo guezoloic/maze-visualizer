@@ -9,7 +9,7 @@ class RandomizedDfs extends MazeGenAlgorithm {
         this.stack = []
         this.stack.push(start)
         this.visited = new Set()
-        this.visited.add(this.grid.pos_to_str(start[1], start[0]))
+        this.visited.add(this.grid.pos_to_str(start[0], start[1]))
         
         /** Stores the previous neighbor of each cell added to the stack
          *  enabling digging a passage 
