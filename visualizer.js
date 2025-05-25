@@ -92,12 +92,20 @@ function update() {
     }
     
     if(keyIsPressed) {
-        if (keyIsDown(CONTROL) && keyIsDown(90) && keyIsDown(SHIFT) ) {
-            cellUndoRedoManager.redo();
+
+        if(keyIsDown(CONTROL) && keyIsDown(90)) {
+
+            if(currentAlgorithm.isRunning()) {
+                stopAlgorithm()
+            }
+
+            if(keyIsDown(SHIFT)) {
+                cellUndoRedoManager.redo();
+            } else {
+                cellUndoRedoManager.undo();
+            }
         }
-        else if(keyIsDown(CONTROL) && keyIsDown(90)) {
-            cellUndoRedoManager.undo();
-        }
+
         if (key === 'p') {
             pauseOrResume()
         }
