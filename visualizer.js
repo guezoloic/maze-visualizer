@@ -13,6 +13,8 @@ let cellSize = 33;
 function setup() {
     var canvas = createCanvas(1000, 533); // set default size before changing it
     canvas.parent("canva-parent");
+
+    grid = new Grid(1, 1, [0, 0], [0, 0])
     
     adjustCanvasAndGrid()
     
@@ -36,7 +38,7 @@ function adjustCanvasAndGrid() {
 
     resizeCanvas(cols * cellSize, rows * cellSize);
 
-    grid = new Grid(cols, rows, [3, 5], [cols-3, Math.min(16, rows-1)])
+    grid.initialize(cols, rows, [3, 5], [cols-3, Math.min(16, rows-1)])
 }
   
 function draw() {
@@ -203,9 +205,7 @@ function pauseOrResume() {
 function resetGrid() {  
     currentAlgorithm.finish()
 
-    let posStart = grid.get_start_pos()
-    let posEnd = grid.get_end_pos()
-    grid.initialize(posStart, posEnd)
+    grid.initialize(grid.get_cols(), grid.get_rows(), grid.get_start_pos(), grid.get_end_pos())
     
     cellUndoRedoManager.resetHistory()
 }

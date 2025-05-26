@@ -11,23 +11,23 @@ const CellState = Object.freeze({
 class Grid {
 
     constructor(cols,rows, start, end) {
-        this.cols = cols
-        this.rows = rows
+        this.initialize(cols, rows, start, end)
+    }
+
+    initialize(cols, rows, start, end) {
         this.data = []
+
+        this.rows = rows
+        this.cols = cols
 
         // Start and end positions for the pathfinding algorithm
         // If multiple positions are placed, only the most recent one is stored
         this.start = start
         this.end = end
-
-        this.initialize(start, end)
-    }
-
-    initialize(start, end) {
     
-        for (let i = 0; i < this.rows; i++) {
+        for (let i = 0; i < rows; i++) {
             this.data[i] = [];
-            for (let j = 0; j < this.cols; j++) {
+            for (let j = 0; j < cols; j++) {
                 this.data[i][j] = 0;
             }
         }
@@ -115,6 +115,13 @@ class Grid {
     }
     get_end_pos() {
         return this.end
+    }
+    /** Returns the number of cols */
+    get_cols() {
+        return this.cols
+    }
+    get_rows() {
+        return this.rows
     }
 }
 
