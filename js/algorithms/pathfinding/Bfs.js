@@ -15,11 +15,37 @@ class Bfs extends PathFindingAlgorithm {
                 this.prev[this.grid.pos_to_str(i, j)] = undefined
             }
         }
+
+        /**The current cell used to construct the path step by step,
+        tracing back from the end cell to the starting cell.*/
+        this.current_path_cell = this.end
     }
 
 
     nextStep() {
-        if(!this.hasNextStep()) return
+        if(!this.hasNextStep()) {
+            this.finish()
+            return
+        }
+
+        if(this.isLookingForPath) {
+            this.pathFindingNextStep()
+        } 
+        else if(this.isConstructingPath) {
+            this.pathConstructionNextStep()
+        }
+    }
+
+    hasNextStep() {
+        return this.isLookingForPath || this.isConstructingPath
+    }
+
+    pathFindingNextStep() {
+
+        if(this.queue.length === 0) {
+            this.isLookingForPath = false
+            return;
+        }
 
         let curr = this.queue.at(0)
         this.queue.shift()
@@ -28,7 +54,8 @@ class Bfs extends PathFindingAlgorithm {
         let i = curr[1]
 
         if(this.targetFound(curr)) {
-            this.finish()
+            this.isLookingForPath = false
+            this.isConstructingPath = true
             return
         }
         
@@ -49,33 +76,32 @@ class Bfs extends PathFindingAlgorithm {
             this.grid.set(i, j, 1)
         }
     }
-    hasNextStep() {
-        return this.queue.length > 0
-    }
+
 
     targetFound(curr) {
         return curr[0] === this.end[0] && curr[1] === this.end[1]
     }
-    
+
+    pathConstructionNextStep() {
+        
+        if(this.current_path_cell === undefined) {
+            this.isConstructingPath = false
+            return
+        }
+
+        let curr_j = this.current_path_cell[1]
+        let curr_i = this.current_path_cell[0]
+        
+        if(this.grid.get(curr_j, curr_i) === CellState.VISITED) {
+            this.grid.set(curr_j, curr_i, 4)
+        }
+        this.shortestPath.push(this.grid.pos_to_str(curr_i, curr_j))
+        this.current_path_cell = this.prev[this.grid.pos_to_str(curr_i, curr_j)]
+        
+    }
+
     finish() {
         super.finish()
-        this.constructShortestPath()
-    }
-    
-    constructShortestPath() {
-
-        let curr = this.end 
-        while(curr !== undefined) {
-            if(this.grid.get(curr[1],curr[0]) === CellState.VISITED) {
-                this.grid.set(curr[1], curr[0], 4)
-            }
-            this.shortestPath.push(this.grid.pos_to_str(curr[0], curr[1]))
-            curr = this.prev[this.grid.pos_to_str(curr[0], curr[1])]
-        }
-    }
-
-    getShortestPath() {
-        return this.shortestPath
     }
 
 }
