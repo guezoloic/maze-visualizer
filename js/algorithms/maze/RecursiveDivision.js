@@ -42,11 +42,24 @@ class RecursiveDivision extends MazeGenAlgorithm {
         return this.pending_walls.length > 0
     }
     
-    processSection(x_pos, y_pos, width, height) {
+    processSection(x_pos, y_pos, width, height, randomWallOrientation = false) {
     
         if(!this.isSectionTooSmall(width, height)) {
     
-            let wall_vertical = Math.round(Math.random())  // 1 = vertical wall, 0 = horizontal
+            let wall_vertical; // 1 = vertical wall, 0 = horizontal
+            
+            if(randomWallOrientation) {
+                // choose wall orientation randomly
+                wall_vertical = Math.round(Math.random())
+            } else {
+                // Choose based on section dimensions:
+                // horizontal if taller (height > width), vertical otherwise
+                if(width < height) {
+                    wall_vertical = 0
+                } else {
+                    wall_vertical = 1
+                }
+            }
     
             if(wall_vertical) {
                 let wall_x = randEven(x_pos, x_pos+width)
