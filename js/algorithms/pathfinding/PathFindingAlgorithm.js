@@ -14,7 +14,8 @@ class PathFindingAlgorithm extends RealtimeAlgorithm {
         /** Target pos */
         this.end = end
         this.running = true
-    }
 
-    getShortestPath() {}
+        this.isLookingForPath = true
+        this.isConstructingPath = false
+    }
 }

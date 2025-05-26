@@ -11,19 +11,23 @@ const CellState = Object.freeze({
 class Grid {
 
     constructor(cols,rows, start, end) {
-        this.cols = cols
-        this.rows = rows
-        this.data = []
-        this.start = start
-        this.end = end
-        this.generate(start, end)
+        this.initialize(cols, rows, start, end)
     }
 
-    generate(start, end) {
+    initialize(cols, rows, start, end) {
+        this.data = []
+
+        this.rows = rows
+        this.cols = cols
+
+        // Start and end positions for the pathfinding algorithm
+        // If multiple positions are placed, only the most recent one is stored
+        this.start = start
+        this.end = end
     
-        for (let i = 0; i < this.rows; i++) {
+        for (let i = 0; i < rows; i++) {
             this.data[i] = [];
-            for (let j = 0; j < this.cols; j++) {
+            for (let j = 0; j < cols; j++) {
                 this.data[i][j] = 0;
             }
         }
@@ -76,18 +80,48 @@ class Grid {
 
     set(i, j, val) {
         if(this.data[i][j] == CellState.START) {
+            if(val !== CellState.START) {
+                console.warn("replacing an existing CellState.START")
+            }
+
             this.start = undefined
         }
         if(this.data[i][j] == CellState.END) {
+            if(val !== CellState.END) {
+                console.warn("replaced an existing CellState.END")
+            }
+            
             this.end = undefined
         }
 
         this.data[i][j] = val
 
+        // Update start/end to point to the latest placed position
+        if(val == CellState.START) {
+            this.start = [j,i]
+        }
+        if(val == CellState.END) {
+            this.end = [j,i]
+        }
+
     }
 
     get(i, j) {
         return this.data[i][j]
+    }
+
+    get_start_pos() {
+        return this.start
+    }
+    get_end_pos() {
+        return this.end
+    }
+    /** Returns the number of cols */
+    get_cols() {
+        return this.cols
+    }
+    get_rows() {
+        return this.rows
     }
 }
 
